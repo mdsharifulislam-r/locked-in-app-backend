@@ -6,4 +6,6 @@ COPY . .
 
 RUN ["npm","install","--force"]
 
-CMD [ "npm","run","dev" ]
+RUN [ "npm","run","build" ]
+
+CMD [ "npm","start" ]
