@@ -24,9 +24,11 @@ async function generateDockerAndKongServices() {
     kongConfig = yaml.load(fs.readFileSync(KONG_YAML_PATH, "utf8")) || kongConfig;
   }
 
+  const excludeModules = ["resetToken"];
+
   // 4️⃣ For each module, add docker service and kong service if not exist
   modules.forEach(moduleName => {
-    if(moduleName === "resetToken") return;
+    if(excludeModules.includes(moduleName)) return;
     
     const serviceName = `${moduleName}-service`.toLowerCase();
     const modulePort = 5000 + Math.floor(Math.random() * 1000); // dynamic port, just example
@@ -38,12 +40,12 @@ async function generateDockerAndKongServices() {
         ports: [`${modulePort}:${modulePort}`],
         environment: [
           `PORT=${modulePort}`,
-          `DATABASE_URL=mongodb://mongo:27017/embay`,
-          `BACKUP_DATABASE_URL=mongodb://mongo:27017/embay`,
-          `REDIS_HOST=redis`,
-          `REDIS_PORT=6379`,
-          `KAFKA_URL=kafka:9092`,
-          `ELASTICSEARCH_URL=http://elasticsearch:9200`,
+        //   `DATABASE_URL=mongodb://mongo:27017/embay`,
+        //   `BACKUP_DATABASE_URL=mongodb://mongo:27017/embay`,
+        //   `REDIS_HOST=redis`,
+        //   `REDIS_PORT=6379`,
+        //   `KAFKA_URL=kafka:9092`,
+        //   `ELASTICSEARCH_URL=http://elasticsearch:9200`,
         ],
         networks: ["template-network"],
         depends_on: ["kong"],

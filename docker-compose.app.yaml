@@ -15,12 +15,6 @@ services:
     build: .
     environment:
       - PORT=5044
-      - DATABASE_URL=mongodb://mongo:27017/sample
-      - BACKUP_DATABASE_URL=mongodb://mongo:27017/sample
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - KAFKA_URL=kafka:9092
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
     networks:
       - template-network
     ports:
@@ -31,12 +25,6 @@ services:
     build: .
     environment:
       - PORT=5043
-      - DATABASE_URL=mongodb://mongo:27017/sample
-      - BACKUP_DATABASE_URL=mongodb://mongo:27017/sample
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - KAFKA_URL=kafka:9092
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
     networks:
       - template-network
     ports:
