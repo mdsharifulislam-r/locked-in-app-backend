@@ -36,7 +36,7 @@ const updateProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     let image = getSingleFilePath(req.files, 'image');
-
+    
     const data = {
       image,
       ...req.body,

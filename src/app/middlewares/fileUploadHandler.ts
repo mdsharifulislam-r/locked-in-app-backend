@@ -5,102 +5,125 @@ import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import ApiError from '../../errors/ApiError';
 
-const fileUploadHandler = () => {
-  //create upload folder
-  const baseUploadDir = path.join(process.cwd(), 'uploads');
-  if (!fs.existsSync(baseUploadDir)) {
-    fs.mkdirSync(baseUploadDir);
+interface FileUpload {
+  name: string;
+  type?: string[];
+  maxCount?: number;
+}
+
+const fileUploadHandler = (customFile: FileUpload[] = []) => {
+  const fileTypeArray: Required<FileUpload>[] = [
+    {
+      name: 'image',
+      type: ['image/jpeg', 'image/png', 'image/jpg'],
+      maxCount: 3,
+    },
+    {
+      name: 'media',
+      type: [
+        'video/mp4',
+        'video/ogg',
+        'video/webm',
+        'audio/mpeg',
+        'audio/ogg',
+        'audio/webm',
+        'audio/wav',
+      ],
+      maxCount: 3,
+    },
+    {
+      name: 'doc',
+      type: ['application/pdf'],
+      maxCount: 3,
+    },
+  ];
+
+  // merge custom config
+  if (customFile.length) {
+    for (const el of customFile) {
+      fileTypeArray.push({
+        name: el.name,
+        type: el.type?.length ? el.type : ['*'],
+        maxCount: el.maxCount ?? 3,
+      });
+    }
   }
 
-  //folder create for different file
+  const baseUploadDir = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(baseUploadDir)) {
+    fs.mkdirSync(baseUploadDir, { recursive: true });
+  }
+
   const createDir = (dirPath: string) => {
     if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath);
+      fs.mkdirSync(dirPath, { recursive: true });
     }
   };
 
-  //create filename
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      let uploadDir;
-      switch (file.fieldname) {
-        case 'image':
-          uploadDir = path.join(baseUploadDir, 'image');
-          break;
-        case 'media':
-          uploadDir = path.join(baseUploadDir, 'media');
-          break;
-        case 'doc':
-          uploadDir = path.join(baseUploadDir, 'doc');
-          break;
-        default:
-          throw new ApiError(StatusCodes.BAD_REQUEST, 'File is not supported');
+      const config = fileTypeArray.find(
+        f => f.name === file.fieldname
+      );
+
+      if (!config) {
+        return cb(
+          new ApiError(StatusCodes.BAD_REQUEST, 'Invalid file field'),
+          ''
+        );
       }
+
+      const uploadDir = path.join(baseUploadDir, config.name);
       createDir(uploadDir);
       cb(null, uploadDir);
     },
+
     filename: (req, file, cb) => {
-      const fileExt = path.extname(file.originalname);
-      const fileName =
-        file.originalname
-          .replace(fileExt, '')
+      const ext = path.extname(file.originalname);
+      const name =
+        path
+          .basename(file.originalname, ext)
           .toLowerCase()
-          .split(' ')
-          .join('-') +
+          .replace(/\s+/g, '-') +
         '-' +
         Date.now();
-      cb(null, fileName + fileExt);
+
+      cb(null, name + ext);
     },
   });
 
-  //file filter
-  const filterFilter = (req: Request, file: any, cb: FileFilterCallback) => {
-    if (file.fieldname === 'image') {
-      if (
-        file.mimetype === 'image/jpeg' ||
-        file.mimetype === 'image/png' ||
-        file.mimetype === 'image/jpg'
-      ) {
-        cb(null, true);
-      } else {
-        cb(
-          new ApiError(
-            StatusCodes.BAD_REQUEST,
-            'Only .jpeg, .png, .jpg file supported'
-          )
-        );
-      }
-    } else if (file.fieldname === 'media') {
-      if (file.mimetype === 'video/mp4' || file.mimetype === 'audio/mpeg') {
-        cb(null, true);
-      } else {
-        cb(
-          new ApiError(
-            StatusCodes.BAD_REQUEST,
-            'Only .mp4, .mp3, file supported'
-          )
-        );
-      }
-    } else if (file.fieldname === 'doc') {
-      if (file.mimetype === 'application/pdf') {
-        cb(null, true);
-      } else {
-        cb(new ApiError(StatusCodes.BAD_REQUEST, 'Only pdf supported'));
-      }
-    } else {
-      cb(new ApiError(StatusCodes.BAD_REQUEST, 'This file is not supported'));
+  const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
+    const config = fileTypeArray.find(
+      f => f.name === file.fieldname
+    );
+
+    if (!config) {
+      return cb(
+        new ApiError(StatusCodes.BAD_REQUEST, 'Invalid file field')
+      );
     }
+
+    if (config.type.includes('*') || config.type.includes(file.mimetype)) {
+      return cb(null, true);
+    }
+
+    cb(
+      new ApiError(
+        StatusCodes.BAD_REQUEST,
+        `Only supports ${config.type.join(', ')}`
+      )
+    );
   };
 
-  const upload = multer({
-    storage: storage,
-    fileFilter: filterFilter,
-  }).fields([
-    { name: 'image', maxCount: 3 },
-    { name: 'media', maxCount: 3 },
-    { name: 'doc', maxCount: 3 },
-  ]);
-  return upload;
+  return multer({
+    storage,
+    fileFilter,
+  }).fields(
+    fileTypeArray.map(f => ({
+      name: f.name,
+      maxCount: f.maxCount,
+    }))
+  );
 };
 
 export default fileUploadHandler;
