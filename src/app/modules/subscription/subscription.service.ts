@@ -125,8 +125,8 @@ const subscribeByStripe = async (PlanId: string, user: JwtPayload) => {
       },
     ],
     mode: "subscription",
-    success_url: `http://localhost:3000/pricing`,
-    cancel_url: `http://localhost:3000/pricing`,
+    success_url: `http://localhost:3000/success`,
+    cancel_url: `http://localhost:3000/cancel`,
     customer_email: userExist.email,
     
     metadata: {
