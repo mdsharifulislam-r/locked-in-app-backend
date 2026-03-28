@@ -59,7 +59,7 @@ const loginUserFromDB = async (payload: ILoginData,res:Response) => {
     config.jwt.jwt_expire_in as string
   );
 
-  return { createToken };
+  return { accessToken: createToken,role:isExistUser.role };
 };
 
 //forget password
@@ -122,6 +122,19 @@ const verifyEmailToDB = async (payload: IVerifyEmail) => {
       { verified: true, authentication: { oneTimeCode: null, expireAt: null } }
     );
     message = 'Email verify successfully';
+    const createToken = jwtHelper.createToken(
+      {
+        id: isExistUser._id,
+        role: isExistUser.role,
+        email: isExistUser.email,
+      },
+      config.jwt.jwt_secret as Secret,
+      config.jwt.jwt_expire_in as string
+    )
+    data = {
+      accessToken: createToken,
+      role: isExistUser.role
+    }
   } else {
     await User.findOneAndUpdate(
       { _id: isExistUser._id },

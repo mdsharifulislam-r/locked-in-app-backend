@@ -21,6 +21,7 @@ const createUserToDB = async (payload: Partial<IUser>,res:Response) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Email already exist!');
 
   }
+  payload.role = USER_ROLES.USER;
   const createUser = await User.create(payload);
   if (!createUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
@@ -53,7 +54,7 @@ const getUserProfileFromDB = async (
   user: JwtPayload
 ): Promise<Partial<IUser>> => {
   const { id } = user;
-  const isExistUser = await User.isExistUserById(id);
+  const isExistUser = await User.findById(id).populate('subscription').lean()
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }

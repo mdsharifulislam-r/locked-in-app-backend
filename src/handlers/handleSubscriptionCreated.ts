@@ -3,10 +3,12 @@ import Stripe from "stripe";
 
 
 import stripe from "../config/stripe";
+import { Plan } from "../app/modules/plan/plan.model";
+import { User } from "../app/modules/user/user.model";
+import { Subscription } from "../app/modules/subscription/subscription.model";
+import { sendNotifications } from "../helpers/notificationHelper";
 
-const Package = "" as any
-const Subscription = "" as any
-const User = "" as any
+
 
 
 export const handleSubscriptionCreated = async (event: Stripe.Subscription) => {
@@ -28,10 +30,10 @@ export const handleSubscriptionCreated = async (event: Stripe.Subscription) => {
             console.log("price_id not found");
             return
         }
-        const packageData = await Package.findOne({price_id});
-        if(!packageData){
-            console.log("package not found");
-            return
+        const PlanData = await Plan.findOne({priceId:price_id}).lean();
+        if(!PlanData){
+            console.log("Plan not found");
+            throw new Error("Plan not found")
         }
         const customer = await stripe.customers.retrieve(subscription.customer as string);
         if(!customer){
@@ -56,23 +58,34 @@ export const handleSubscriptionCreated = async (event: Stripe.Subscription) => {
         }
 
         const startDate = new Date();
-        const endDate = packageData.recurring =="week"? new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000):packageData.recurring=="month"? new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000):new Date(startDate.getTime() + 365 * 24 * 60 * 60 * 1000)
+        const endDate = PlanData.category =="week"? new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000):PlanData.category=="month"? new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000):new Date(startDate.getTime() + 365 * 24 * 60 * 60 * 1000)
         
 
         const newSubscription = await Subscription.create({
             subscriptionId: event.id,
             status: "active",
             user: user._id,
-            package: packageData._id,
+            Plan: PlanData._id,
             startDate:startDate,
             endDate:endDate,
-            price:packageData.price,
+            price:PlanData.price,
+            name:PlanData.name
         })
 
 
 
 
         await User.findByIdAndUpdate(user._id,{subscription:newSubscription._id},{session:mongooseSession})
+
+
+        sendNotifications({
+            title:"Subscription",
+            message:`You have subscribed to ${PlanData.name} plan`,
+            receiver:[user._id as any],
+            isRead:false,
+            filePath:"payment",
+            referenceId:newSubscription._id
+        })
 
 
         await mongooseSession.commitTransaction()
