@@ -90,6 +90,10 @@ if (otpSession && Date.now() < new Date(otpSession.expireAt).getTime()) {
   });
 
   emailHelper.sendEmail(emailTemp);
+  await UnlockOtpSession.deleteMany({
+    contactId: payload.contactId,
+    appName: payload.appName,
+  });
   const result = await UnlockOtpSession.create({
     contactId: payload.contactId,
     appName: payload.appName,
