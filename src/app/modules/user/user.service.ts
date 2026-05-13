@@ -164,7 +164,9 @@ const getStaticsFromDb = async () => {
         createdAt: {
           $gte: thisYearStartDate,
           $lte: thisYearEndDate
-        }
+        },
+        role: USER_ROLES.USER,
+        verified: true
       }
     },
     {
