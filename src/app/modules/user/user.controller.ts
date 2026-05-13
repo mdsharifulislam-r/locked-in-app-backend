@@ -8,7 +8,7 @@ import { UserService } from './user.service';
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { ...userData } = req.body;
-    const result = await UserService.createUserToDB(userData,res);
+    const result = await UserService.createUserToDB(userData, res);
 
     sendResponse(res, {
       success: true,
@@ -36,7 +36,7 @@ const updateProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     let image = getSingleFilePath(req.files, 'image');
-    
+
     const data = {
       image,
       ...req.body,
@@ -62,4 +62,37 @@ const uploadFile = catchAsync(async (req: Request, res: Response) => {
   })
 });
 
-export const UserController = { createUser, getUserProfile, updateProfile, uploadFile };
+
+const lockUnlockUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await UserService.lockUnlockUserFromDb(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User locked/unlocked successfully',
+    data: result,
+  })
+});
+
+const getUserList = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getUserListFromDB(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User list retrieved successfully',
+    data: result.data,
+    pagination: result.pagination
+  })
+});
+
+const getStatics = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getStaticsFromDb();
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Statics retrieved successfully',
+    data: result
+  })
+})
+
+export const UserController = { createUser, getUserProfile, updateProfile, uploadFile, getUserList, lockUnlockUser, getStatics };

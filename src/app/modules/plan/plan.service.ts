@@ -8,6 +8,7 @@ import { RedisHelper } from '../../../tools/redis/redis.helper';
 import ApiError from '../../../errors/ApiError';
 import { StatusCodes } from 'http-status-codes';
 import stripe from '../../../config/stripe';
+import { USER_ROLES } from '../../../enums/user';
 
 
 
@@ -25,9 +26,9 @@ const createPlanOFUserInDB = async (data: IPlan) => {
         unit_amount: Math.round(data.price * 100),
         currency: 'usd',
         product: packagek.id,
-        recurring:{
-            interval:data.category,
-            interval_count:data.duration||1
+        recurring: {
+            interval: data.category,
+            interval_count: data.duration || 1
         }
     })
     const paymentLink = await stripe.paymentLinks.create({
@@ -44,26 +45,26 @@ const createPlanOFUserInDB = async (data: IPlan) => {
             },
         },
     })
-    const result = await Plan.create({ ...data, productId: packagek.id, priceId: price.id,paymentLink: paymentLink.url });
+    const result = await Plan.create({ ...data, productId: packagek.id, priceId: price.id, paymentLink: paymentLink.url });
     return result;
 }
 
 
-const getAllPlans = async () => {
+const getAllPlans = async (user: JwtPayload) => {
 
-    let result = await Plan.find({ status: 'active'}).sort({ createdAt: -1 }).lean();
+    let result = await Plan.find([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN].includes(user?.role) ? { status: { $ne: 'delete' } } : { status: 'active' }).sort({ createdAt: -1 }).lean();
     return result;
 }
 
 
 const updatePlansIntoDb = async (id: string, data: Partial<IPlan>) => {
-    const exist = await Plan.findOne({ status: 'active', _id: id });
+    const exist = await Plan.findOne({ _id: id });
     if (!exist) {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'Plan not found');
     }
-    if(data.price && data.price != exist.price){
+    if (data.price && data.price != exist.price) {
         const price = await stripe.prices.create({
-            unit_amount: data.price,
+            unit_amount: Math.round(data.price * 100),
             currency: 'usd',
             product: exist.productId
         })
@@ -85,25 +86,25 @@ const updatePlansIntoDb = async (id: string, data: Partial<IPlan>) => {
         data.priceId = price.id
         data.paymentLink = paymentLink.url
     }
-    if(data.name && data.name != exist.name){
+    if (data.name && data.name != exist.name) {
         const packagek = await stripe.products.create({
             name: data.name,
             description: data.subtitle,
         });
         data.productId = packagek.id
     }
-    const result = await Plan.findOneAndUpdate({ status: 'active', _id: id }, data, { new: true });
+    const result = await Plan.findOneAndUpdate({ _id: id }, data, { new: true });
     return result;
 }
 
 
 const deletePlanFromDB = async (id: string) => {
-    const result = await Plan.findOneAndUpdate({ status: 'active', _id: id }, { status: 'inactive' }, { new: true });
+    const result = await Plan.findOneAndUpdate({ _id: id }, { status: 'delete' }, { new: true });
     return result;
 }
 
 
-const subscribePlan = async (id: string,user:JwtPayload) => {
+const subscribePlan = async (id: string, user: JwtPayload) => {
     const plan = await Plan.findOne({ status: 'active', _id: id });
     if (!plan) {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'Plan not found');

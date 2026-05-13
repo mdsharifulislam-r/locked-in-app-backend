@@ -2,6 +2,8 @@ import express from "express";
 import auth from "../../middlewares/auth";
 import { NotificationController } from "./notification.controller";
 import { USER_ROLES } from "../../../enums/user";
+import { NotificationValidation } from "./notification.validation";
+import validateRequest from "../../middlewares/validateRequest";
 const router = express.Router();
 
 // router.get('/',
@@ -22,6 +24,14 @@ router.patch(
   auth(),
   NotificationController.markAllNotification
 );
+
+router.post(
+  "/send-notifications",
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  validateRequest(NotificationValidation.sendNotificationsToUserZodSchema),
+  NotificationController.sendNotificationsToUser
+)
+
 router.patch(
   "/:id",
   auth(),

@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IPlan, PlanModel } from './plan.interface'; 
+import { IPlan, PlanModel } from './plan.interface';
 
 
 const planSchema = new Schema<IPlan, PlanModel>({
@@ -21,12 +21,12 @@ const planSchema = new Schema<IPlan, PlanModel>({
   },
   status: {
     type: String,
-    enum: ['active', 'inactive'],
+    enum: ['active', 'inactive', 'delete'],
     default: 'active',
   },
   category: {
     type: String,
-    enum: ['month', 'year'],
+    enum: ['month', 'year', 'week'],
     default: 'month',
   },
   duration: {

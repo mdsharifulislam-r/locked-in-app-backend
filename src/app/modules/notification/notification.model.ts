@@ -20,7 +20,7 @@ const notificationSchema = new Schema<INotification, NotificationModel>(
 
     filePath: {
       type: String,
-      enum: ["booking", "payment", "general", "review"],
+      enum: ["booking", "payment", "general", "review", "user", "subscription"],
       default: "general",
     },
     isRead: {

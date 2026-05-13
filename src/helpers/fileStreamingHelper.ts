@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import mime from 'mime';
+import mime from 'mime-types';
 
 export const fileStreamHandler = async (req: Request, res: Response) => {
   try {

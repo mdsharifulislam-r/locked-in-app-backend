@@ -18,9 +18,10 @@ import { ResetToken } from '../resetToken/resetToken.model';
 import { User } from '../user/user.model';
 import { Response } from 'express';
 import { AuthHelper } from './auth.helper';
+import { sendNotificationsAdmin } from '../../../helpers/notificationHelper';
 
 //login
-const loginUserFromDB = async (payload: ILoginData,res:Response) => {
+const loginUserFromDB = async (payload: ILoginData, res: Response) => {
   const { email, password } = payload;
   const isExistUser = await User.findOne({ email }).select('+password');
   if (!isExistUser) {
@@ -29,7 +30,7 @@ const loginUserFromDB = async (payload: ILoginData,res:Response) => {
 
   //check verified and status
   if (!isExistUser.verified) {
-   return await AuthHelper.unverifiedAccountHandle(email,res);
+    return await AuthHelper.unverifiedAccountHandle(email, res);
   }
 
   //check user status
@@ -40,7 +41,7 @@ const loginUserFromDB = async (payload: ILoginData,res:Response) => {
     );
   }
 
-  if(!password){
+  if (!password) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is required!');
   }
 
@@ -59,7 +60,7 @@ const loginUserFromDB = async (payload: ILoginData,res:Response) => {
     config.jwt.jwt_expire_in as string
   );
 
-  return { accessToken: createToken,role:isExistUser.role };
+  return { accessToken: createToken, role: isExistUser.role };
 };
 
 //forget password
@@ -122,6 +123,13 @@ const verifyEmailToDB = async (payload: IVerifyEmail) => {
       { verified: true, authentication: { oneTimeCode: null, expireAt: null } }
     );
     message = 'Email verify successfully';
+    sendNotificationsAdmin({
+      title: 'New User Registration',
+      message: `${isExistUser.name} has been verified successfully`,
+      isRead: false,
+      filePath: "user",
+      referenceId: isExistUser._id,
+    })
     const createToken = jwtHelper.createToken(
       {
         id: isExistUser._id,

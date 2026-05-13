@@ -17,7 +17,7 @@ const createPlan = catchAsync(async (req: Request, res: Response) => {
 
 
 const getAllPlans = catchAsync(async (req: Request, res: Response) => {
-    const result = await PlanServices.getAllPlans();
+    const result = await PlanServices.getAllPlans(req.user);
     return res.status(200).json({
         success: true,
         statusCode: 200,
@@ -31,6 +31,8 @@ const getAllPlans = catchAsync(async (req: Request, res: Response) => {
 const updatePlan = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
     const { ...data } = req.body;
+
+
     const result = await PlanServices.updatePlansIntoDb(id, data);
     return res.status(200).json({
         success: true,
@@ -42,15 +44,15 @@ const updatePlan = catchAsync(async (req: Request, res: Response) => {
 
 const deletePlan = catchAsync(
     async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const result = await PlanServices.deletePlanFromDB(id);
-    return res.status(200).json({
-        success: true,
-        statusCode: 200,
-        message: 'Plan deleted successfully',
-        data: result,
-    });
-}
+        const { id } = req.params;
+        const result = await PlanServices.deletePlanFromDB(id);
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Plan deleted successfully',
+            data: result,
+        });
+    }
 )
 
 

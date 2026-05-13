@@ -10,7 +10,7 @@ const updateNotificationById = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = (req.user as any);
-    const result = await NotificationService.updateNotificationToDB(id,user!);
+    const result = await NotificationService.updateNotificationToDB(id, user!);
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
@@ -21,8 +21,8 @@ const updateNotificationById = catchAsync(
 );
 
 const getAllNotification = catchAsync(async (req: Request, res: Response) => {
- 
-  
+
+
   const user = (req.user as any);
 
   const result = await NotificationService.allNotificationFromDB(
@@ -49,8 +49,21 @@ const markAllNotification = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+const sendNotificationsToUser = catchAsync(async (req: Request, res: Response) => {
+
+
+  NotificationService.sendNotificationsToUser(req.body)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Notification sent successfully",
+  });
+})
+
 export const NotificationController = {
   updateNotificationById,
   getAllNotification,
   markAllNotification,
+  sendNotificationsToUser
 };

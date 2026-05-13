@@ -4,16 +4,56 @@ const createAccount = (values: ICreateAccount) => {
   const data = {
     to: values.email,
     subject: 'Verify your account',
-    html: `<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 50px; padding: 20px; color: #555;">
-    <div style="width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-        <img src="https://i.postimg.cc/6pgNvKhD/logo.png" alt="Logo" style="display: block; margin: 0 auto 20px; width:150px" />
-          <h2 style="color: #277E16; font-size: 24px; margin-bottom: 20px;">Hey! ${values.name}, Your Toothlens Account Credentials</h2>
-        <div style="text-align: center;">
-            <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">Your single use code is:</p>
-            <div style="background-color: #277E16; width: 80px; padding: 10px; text-align: center; border-radius: 8px; color: #fff; font-size: 25px; letter-spacing: 2px; margin: 20px auto;">${values.otp}</div>
-            <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">This code is valid for 3 minutes.</p>
-        </div>
-    </div>
+    html: `<body style="margin:0; padding:0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color:#f4f6f8;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:20px 0; background-color:#f4f6f8;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="padding:30px 0; background: linear-gradient(90deg, #ff4d4d, #ff7a7a);">
+              <img src="https://res.cloudinary.com/dkbcx9amc/image/upload/c_crop,g_north_west,h_266,w_838,x_243,y_193/Locked_in-removebg-preview_1_1_fb0ekg.png" alt="Logo" style="width:200px; margin-bottom:10px;" />
+              <h1 style="color:#ffffff; margin:0; font-size:30px; font-weight:700;">
+                Account Verification
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px 30px; text-align:center;">
+              <h2 style="color:#333333; font-size:22px; margin-bottom:15px;">
+                Hey ${values.name}!
+              </h2>
+
+              <p style="color:#555555; font-size:16px; margin-bottom:25px;">
+                Your single use verification code is:
+              </p>
+
+              <div style="display:inline-block; padding:20px 40px; font-size:32px; letter-spacing:10px;
+                background-color:#fff5f5; border-radius:12px; border:2px dashed #ff4d4d;
+                color:#ff4d4d; font-weight:bold;">
+                ${values.otp}
+              </div>
+
+              <p style="color:#777777; font-size:14px; margin-top:25px;">
+                This code is valid for 3 minutes.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 30px; text-align:center; background-color:#f4f6f8; font-size:12px; color:#999999;">
+              © 2026 Your Company. All rights reserved.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>`,
   };
   return data;
@@ -23,16 +63,56 @@ const resetPassword = (values: IResetPassword) => {
   const data = {
     to: values.email,
     subject: 'Reset your password',
-    html: `<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 50px; padding: 20px; color: #555;">
-    <div style="width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-        <img src="https://i.postimg.cc/6pgNvKhD/logo.png" alt="Logo" style="display: block; margin: 0 auto 20px; width:150px" />
-        <div style="text-align: center;">
-            <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">Your single use code is:</p>
-            <div style="background-color: #277E16; width: 80px; padding: 10px; text-align: center; border-radius: 8px; color: #fff; font-size: 25px; letter-spacing: 2px; margin: 20px auto;">${values.otp}</div>
-            <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">This code is valid for 3 minutes.</p>
-                <p style="color: #b9b4b4; font-size: 16px; line-height: 1.5; margin-bottom: 20px;text-align:left">If you didn't request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.</p>
-        </div>
-    </div>
+    html: `<body style="margin:0; padding:0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color:#f4f6f8;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:20px 0; background-color:#f4f6f8;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="padding:30px 0; background: linear-gradient(90deg, #ff4d4d, #ff7a7a);">
+              <img src="https://res.cloudinary.com/dkbcx9amc/image/upload/c_crop,g_north_west,h_266,w_838,x_243,y_193/Locked_in-removebg-preview_1_1_fb0ekg.png" alt="Logo" style="width:200px; margin-bottom:10px;" />
+              <h1 style="color:#ffffff; margin:0; font-size:30px; font-weight:700;">
+                Reset Password
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px 30px; text-align:center;">
+              <p style="color:#555555; font-size:16px; margin-bottom:25px;">
+                Your password reset code is:
+              </p>
+
+              <div style="display:inline-block; padding:20px 40px; font-size:32px; letter-spacing:10px;
+                background-color:#fff5f5; border-radius:12px; border:2px dashed #ff4d4d;
+                color:#ff4d4d; font-weight:bold;">
+                ${values.otp}
+              </div>
+
+              <p style="color:#777777; font-size:14px; margin-top:25px;">
+                This code is valid for 3 minutes.
+              </p>
+
+              <p style="color:#b9b4b4; font-size:14px; margin-top:20px; text-align:left;">
+                If you didn't request this code, you can safely ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 30px; text-align:center; background-color:#f4f6f8; font-size:12px; color:#999999;">
+              © 2026 Your Company. All rights reserved.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>`,
   };
   return data;

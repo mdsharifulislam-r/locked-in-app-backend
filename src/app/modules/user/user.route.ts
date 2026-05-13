@@ -9,9 +9,9 @@ const router = express.Router();
 
 router
   .route('/profile')
-  .get(auth(USER_ROLES.ADMIN, USER_ROLES.USER), UserController.getUserProfile)
+  .get(auth(), UserController.getUserProfile)
   .patch(
-    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
+    auth(),
     fileUploadHandler(),
     (req: Request, res: Response, next: NextFunction) => {
       if (req.body.data) {
@@ -28,7 +28,11 @@ router
   .post(
     validateRequest(UserValidation.createUserZodSchema),
     UserController.createUser
-  );
+  )
+  .get(auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN), UserController.getUserList);
+
+router.route('/lock-unlock/:id').patch(auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN), UserController.lockUnlockUser);
 
 router.route('/upload-file').post(fileUploadHandler(), UserController.uploadFile);
+router.route('/admin/statics').get(auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN), UserController.getStatics);
 export const UserRoutes = router;

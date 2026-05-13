@@ -5,8 +5,8 @@ export type IPlan = {
   subtitle: string;
   price: number;
   features: string[],
-  status: 'active' | 'inactive',
-  category: 'month' | 'year'|'week'
+  status: 'active' | 'inactive' | "delete"
+  category: 'month' | 'year' | 'week'
   duration: number,
   priceId: string,
   paymentLink: string,
