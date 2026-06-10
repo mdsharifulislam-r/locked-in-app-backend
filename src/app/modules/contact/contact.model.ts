@@ -17,7 +17,6 @@ const contactSchema = new Schema<IContact, ContactModel>({
   },
   contact: {
     type: String,
-    required: true,
   },
   relation: {
     type: String,
