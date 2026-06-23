@@ -207,7 +207,7 @@ const emargencyUnlockAppOtpTemplate = (values: {
               }
 
               <p style="color:#777777; font-size:14px; line-height:1.7; margin-bottom:0;">
-                This password will expire in <strong>10 minutes</strong>.
+                This password will expire in <strong>3 minutes</strong>.
                 If you do not approve this request, please ignore this email.
               </p>
 
