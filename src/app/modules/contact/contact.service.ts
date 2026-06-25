@@ -98,6 +98,7 @@ if (otpSession && Date.now() < new Date(otpSession.expireAt).getTime()) {
     contactId: payload.contactId,
     appName: payload.appName,
     otp: otp,
+    expireAt: new Date(Date.now() + 3 * 60000),
   });
 
   return true

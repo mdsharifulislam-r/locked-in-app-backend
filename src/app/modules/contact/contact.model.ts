@@ -48,7 +48,6 @@ const unlockOtpSessionSchema = new Schema<IUnlockOtpSessionPayload,UnlockOtpSess
   expireAt: {
     type: Date,
     required: false,
-    default: Date.now() + 10 * 60 * 1000,
   },
 })
 
