@@ -113,7 +113,7 @@ const verifyUnlockOtp = async (payload: IUnlockOtpSessionPayload) => {
   
   if (!otpSession) throw new ApiError(StatusCodes.BAD_REQUEST, 'Otp session not found');
   if (otpSession.otp !== payload.otp) throw new ApiError(StatusCodes.BAD_REQUEST, 'Wrong otp');
-  if(new Date(otpSession.expireAt).getTime() < Date.now()) throw new ApiError(StatusCodes.BAD_REQUEST, 'Otp session expired');
+  if(new Date(otpSession.expireAt) < new Date()) throw new ApiError(StatusCodes.BAD_REQUEST, 'Otp session expired');
   await UnlockOtpSession.findByIdAndDelete(otpSession.id);
   return true;
 };
