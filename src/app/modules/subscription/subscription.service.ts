@@ -14,6 +14,7 @@ import generateOTP from "../../../util/generateOTP";
 import { emailHelper } from "../../../helpers/emailHelper";
 import { emailTemplate } from "../../../shared/emailTemplate";
 import { Plan } from "../plan/plan.model";
+import { sendNotifications } from "../../../helpers/notificationHelper";
 
 export interface AppleReceiptResponse {
   status: number;
@@ -83,7 +84,7 @@ const verifyAppleReceipt = async (receipt: string, userId: ObjectId) => {
   });
 
   if (existing) {
-    existing.status = "expired";
+    existing.status = "inactive";
     await existing.save();
   }
 
@@ -101,6 +102,15 @@ const verifyAppleReceipt = async (receipt: string, userId: ObjectId) => {
   // 🔹 Update user subscription ref
   await User.findByIdAndUpdate(userId, {
     subscription: subscription._id,
+  });
+
+  sendNotifications({
+    title: "Subscription Activated",
+    message: "Your subscription has been activated successfully.",
+    receiver: [userId as any],
+    isRead: false,
+    filePath: "subscription",
+    referenceId: subscription._id
   });
 
   

@@ -53,6 +53,9 @@ const loginUserFromDB = async (payload: ILoginData, res: Response) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is incorrect!');
   }
 
+  if(payload.fcmToken){
+    await User.findOneAndUpdate({ email }, { $addToSet: { fcmTokens: payload.fcmToken } });
+  }
   //create token
   const createToken = jwtHelper.createToken(
     { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },

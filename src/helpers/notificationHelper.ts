@@ -3,6 +3,7 @@ import { INotification } from "../app/modules/notification/notification.interfac
 import { Notification } from "../app/modules/notification/notification.model";
 import { User } from "../app/modules/user/user.model";
 import { USER_ROLES } from "../enums/user";
+import { sendNotificationToFCM } from "./sendNotificationFCM";
 
 export const sendNotifications = async (
   data: INotification
@@ -14,6 +15,19 @@ export const sendNotifications = async (
 
   if (socketIo) {
     socketIo.emit(`get-notification::${data?.receiver![0]}`, result);
+  }
+
+  if(data?.receiver?.length??0 > 1){
+    for(const receiver of data?.receiver!){
+      sendNotificationToFCM({
+        title: data.title,
+        body: data.message,
+        data: {
+          type: data.filePath,
+          id: result._id
+        }
+      }, receiver)
+    }
   }
 
   return result;
@@ -38,6 +52,8 @@ export const sendNotificationsAdmin = async (
 
   return result;
 };
+
+
 
 
 

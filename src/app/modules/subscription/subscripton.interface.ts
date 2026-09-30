@@ -5,7 +5,7 @@ export type ISubscription = {
     price: number;
     startDate: Date;
     endDate: Date;
-    status: "active" | "expired";
+    status: "active" | "expired" | "inactive";
     user: Types.ObjectId;
     txId: string;
     package?: Types.ObjectId;

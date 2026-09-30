@@ -17,6 +17,7 @@ export type IUser = {
     expireAt: Date;
   };
   subscription?: Types.ObjectId;
+  fcmTokens?: string[];
 };
 
 export type UserModal = {

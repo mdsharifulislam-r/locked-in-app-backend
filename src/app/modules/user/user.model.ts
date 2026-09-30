@@ -62,7 +62,11 @@ const userSchema = new Schema<IUser, UserModal>(
     subscription: {
       type: Schema.Types.ObjectId,
       ref: 'Subscription',
-    }
+    },
+    fcmTokens: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );

@@ -70,7 +70,7 @@ const emargencyUnlockApp = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Otp sent successfully',
+    message: 'OTP sent successfully',
     data: result,
   })
 })
@@ -82,7 +82,7 @@ const verifyUnlockOtp = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Otp verified successfully',
+    message: 'OTP verified successfully',
     data: result,
   })
 })

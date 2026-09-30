@@ -12,6 +12,7 @@ import { StatusCodes } from 'http-status-codes';
 import { emailTemplate } from '../../../shared/emailTemplate';
 import generateOTP from '../../../util/generateOTP';
 import { emailHelper } from '../../../helpers/emailHelper';
+import { sendNotifications } from '../../../helpers/notificationHelper';
 
 const createContactIntoDB = async (
   data: IContact,
@@ -46,6 +47,14 @@ const getAllContactFromDB = async (
 };
 
 const deleteContactFromDB = async (id: string): Promise<IContact | null> => {
+  const contact = await Contact.findById(id);
+  if (!contact) throw new ApiError(StatusCodes.NOT_FOUND, 'Contact not found');
+  const totalContactCounts = await Contact.countDocuments({ user: contact.user });
+  if (totalContactCounts <= 1)
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'You can not delete the last contact.',
+    );
   const result = await Contact.findByIdAndDelete(id);
   return result;
 };
@@ -75,7 +84,7 @@ const emargencyUnlockApp = async (payload: IEmargencyUnlockPayload) => {
   });
   
 if (otpSession && Date.now() < new Date(otpSession.expireAt).getTime()) {
-  throw new ApiError(StatusCodes.BAD_REQUEST, 'Otp already sent');
+  throw new ApiError(StatusCodes.BAD_REQUEST, 'OTP already sent');
 }
 
   const otp = generateOTP();
@@ -109,7 +118,7 @@ const verifyUnlockOtp = async (payload: IUnlockOtpSessionPayload) => {
   const otpSession = await UnlockOtpSession.findOne({
     contactId: payload.contactId,
     appName: payload.appName,
-  });
+  }).populate('contactId');
 
 
 
@@ -117,9 +126,16 @@ const verifyUnlockOtp = async (payload: IUnlockOtpSessionPayload) => {
   if (!otpSession) throw new ApiError(StatusCodes.BAD_REQUEST, 'Otp session not found');
   if (otpSession.otp !== payload.otp) throw new ApiError(StatusCodes.BAD_REQUEST, 'Wrong otp');
 
-  console.log(new Date(otpSession.expireAt), new Date());
   if(new Date(otpSession.expireAt) < new Date()) throw new ApiError(StatusCodes.BAD_REQUEST, 'Otp session expired');
-  await UnlockOtpSession.findByIdAndDelete(otpSession.id);
+  await UnlockOtpSession.findByIdAndDelete(otpSession._id);
+  sendNotifications({
+    title: 'Unlock App!',
+    message: `Your ${payload.appName} app has been unlocked successfully`,
+    isRead: false,
+    receiver:[(otpSession.contactId as any).user],
+    filePath: 'user',
+    referenceId: (otpSession.contactId as any).user
+  })
   return true;
 };
 
