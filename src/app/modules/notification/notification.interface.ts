@@ -15,9 +15,10 @@ export type NotificationModel = Model<INotification>;
 
 
 export type INotificationUser = {
-  target: "all_users" | "active_subscribers" | "inactive_users",
+  target: "all_users" | "active_subscribers" | "inactive_users" | "specific_users",
   type: "all" | "subscription" | "booking" | "payment" | "general" | "review",
   title: string,
   message: string,
+  userIds?: Types.ObjectId[]
 };
 

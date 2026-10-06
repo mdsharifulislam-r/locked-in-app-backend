@@ -141,6 +141,15 @@ const sendNotificationsToUser = async (payload: INotificationUser) => {
 
       }
     }
+    if (target == "specific_users") {
+      await sendNotifications({
+        title,
+        message,
+        receiver: payload.userIds,
+        isRead: false,
+        filePath: type as any,
+      })
+    }
   } catch (error) {
     console.log(error);
   }
