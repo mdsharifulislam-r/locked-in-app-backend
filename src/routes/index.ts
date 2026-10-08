@@ -7,6 +7,7 @@ import { PlanRoutes } from '../app/modules/plan/plan.route';
 import { SubscriptionRoutes } from '../app/modules/subscription/subscription.route';
 import { NotificationRoutes } from '../app/modules/notification/notification.routes';
 import { ApplicationRoutes } from '../app/modules/application/application.route';
+import { LockappRoutes } from '../app/modules/lockapp/lockapp.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -41,6 +42,10 @@ const apiRoutes = [
   {
     path:"/application",
     route:ApplicationRoutes
+  },
+  {
+    path:"/lock-app",
+    route:LockappRoutes
   }
 ];
 
