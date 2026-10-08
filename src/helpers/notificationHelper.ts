@@ -17,18 +17,18 @@ export const sendNotifications = async (
     socketIo.emit(`get-notification::${data?.receiver![0]}`, result);
   }
 
-  if(data?.receiver?.length??0 > 1){
-    for(const receiver of data?.receiver!){
-      sendNotificationToFCM({
-        title: data.title,
-        body: data.message,
-        data: {
-          type: data.filePath,
-          id: result._id
-        }
-      }, receiver)
-    }
-  }
+  // if(data?.receiver?.length??0 > 1){
+  //   for(const receiver of data?.receiver!){
+  //     sendNotificationToFCM({
+  //       title: data.title,
+  //       body: data.message,
+  //       data: {
+  //         type: data.filePath,
+  //         id: result._id
+  //       }
+  //     }, receiver)
+  //   }
+  // }
 
   return result;
 };
