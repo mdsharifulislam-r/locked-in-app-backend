@@ -1,7 +1,9 @@
 import cron from 'node-cron'
+import { sendDeadlineNotifications } from './handlers/sendDeadlineNotificationsHandler';
 
-const worker = () => {
+export const worker = () => {
     cron.schedule('* * * * *', () => {
-        console.log('running a task every minute');
+       sendDeadlineNotifications()
+       console.log('Deadline notifications sent');
     });
 }

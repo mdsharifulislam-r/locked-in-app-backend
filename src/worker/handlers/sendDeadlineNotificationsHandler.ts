@@ -11,7 +11,7 @@ export const sendDeadlineNotifications = async () => {
         await Promise.allSettled(
             lockapps.map(async (lockapp) => {
                 try {
-                    await sendScilentNotificationToFCM(lockapp, lockapp.user);
+                    await sendScilentNotificationToFCM({ title: 'Deadline', body: 'Your lockapp is about to expire.' }, '6ac75e481423f3604667d6cf' as any);
                 } catch (error) {
                     console.error(`Error processing lockapp with ID ${lockapp._id}:`, error);
                 }

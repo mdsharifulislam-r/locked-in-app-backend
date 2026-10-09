@@ -57,11 +57,6 @@ export const sendScilentNotificationToFCM = async (
   try {
     const messaging = getMessaging(firebaseApp);
     const response = await messaging.sendEachForMulticast({
-      data: {
-        type: 'APP_LOCK_EXPIRED',
-        ...Object.fromEntries(Object.entries(data).map(([key, value]) => [key, String(value)]))
-
-      },
       apns: {
         payload: {
           aps: {
@@ -75,7 +70,7 @@ export const sendScilentNotificationToFCM = async (
       },
       tokens: user.fcmTokens,
     });
-    console.log('Successfully sent message:', response);
+    console.log('Successfully sent message:', JSON.stringify(response));
   } catch (error) {
     console.error('Error sending message:', error);
   }
