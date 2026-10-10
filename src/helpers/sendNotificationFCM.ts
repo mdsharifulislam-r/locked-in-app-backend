@@ -70,7 +70,6 @@ export const sendScilentNotificationToFCM = async (
       },
       tokens: user.fcmTokens,
     });
-    console.log('Successfully sent message:', JSON.stringify(response));
   } catch (error) {
     console.error('Error sending message:', error);
   }
