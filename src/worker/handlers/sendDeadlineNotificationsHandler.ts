@@ -4,8 +4,11 @@ import { sendScilentNotificationToFCM } from "../../helpers/sendNotificationFCM"
 export const sendDeadlineNotifications = async () => {
     try {
         const currentDate = new Date();
+        // the lockapp is about to expire
         const lockapps = await Lockapp.find({
-            unlock_time: { $gte: currentDate },
+            unlock_time: {
+                $lte: currentDate
+            }
         }).lean();
         
         await Promise.allSettled(
