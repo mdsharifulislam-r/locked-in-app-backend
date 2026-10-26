@@ -62,7 +62,7 @@ const updatePlansIntoDb = async (id: string, data: Partial<IPlan>) => {
     if (!exist) {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'Plan not found');
     }
-    if (data.price && data.price != exist.price) {
+    if (data?.price !== undefined && data.price >= 0 && data.price != exist.price) {
         const price = await stripe.prices.create({
             unit_amount: Math.round(data.price * 100),
             currency: 'usd',
@@ -86,7 +86,7 @@ const updatePlansIntoDb = async (id: string, data: Partial<IPlan>) => {
         data.priceId = price.id
         data.paymentLink = paymentLink.url
     }
-    if (data.name && data.name != exist.name) {
+    if (data?.name !== undefined && data.name != exist.name) {
         const packagek = await stripe.products.create({
             name: data.name,
             description: data.subtitle,
