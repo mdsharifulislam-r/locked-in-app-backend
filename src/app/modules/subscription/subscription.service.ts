@@ -157,7 +157,7 @@ const demoSubscriptionForTest = async (PlanId:string,user:JwtPayload)=>{
   }
 
   const statrDate =new Date()
-  // const endDate = PlanData.category === "year" ? new Date(statrDate.getFullYear() + 1, statrDate.getMonth(), statrDate.getDate()) : new Date(statrDate.getFullYear(), statrDate.getMonth() + (PlanData. || 1), statrDate.getDate());
+  const endDate = PlanData.category === "year" ? new Date(statrDate.getFullYear() + 1, statrDate.getMonth(), statrDate.getDate()) : new Date(statrDate.getFullYear(), statrDate.getMonth() + (PlanData.duration || 1), statrDate.getDate());
 
   await User.findOneAndUpdate({ _id: user.id }, { $set: { subscription: null } });
   await Subscription.updateMany({ user: user.id,status:"active" }, { $set: { status: "inactive" } });
@@ -165,11 +165,12 @@ const demoSubscriptionForTest = async (PlanId:string,user:JwtPayload)=>{
     name: PlanData.name,
     price: PlanData.price,
     startDate: new Date(),
-    // endDate: endDate,
+    endDate: endDate,
     txId: "demo",
     user: user.id,
     status: "active",
-    Plan: PlanId
+    Plan: PlanId,
+    package: PlanId,
   });
 
   await User.findByIdAndUpdate(user.id, {
@@ -274,7 +275,6 @@ export const SubscriptionService = {
   subscribedUser,
   demoSubscriptionForTest,
   subscribeByStripe,
-
   subscriptionUsers,
   getSubscriptionDetailsById,
 
